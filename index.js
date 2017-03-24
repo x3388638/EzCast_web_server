@@ -9,43 +9,39 @@ var path = require('path');
 
 app.use(express.static('web'));
 
-var _socket;
 io.on('connection', function(socket){
-	_socket = socket
-	var remoteIP = _socket.request.connection.remoteAddress.replace('::ffff:', '');
-	console.log('a user connected, IP: ' + remoteIP);
-	if(!member.isExist(remoteIP) && remoteIP != '127.0.0.1') {
-		console.log(`Reject ws from ${remoteIP}.`);
-		_socket.disconnect();
+	let connectedIP = socket.request.connection.remoteAddress.replace('::ffff:', '');
+	console.log(`===== A ws client connected, IP: ${connectedIP} =====`);
+	if(!member.isExist(connectedIP) && connectedIP != '127.0.0.1') {
+		console.log(`Reject ws from ${connectedIP}.`);
+		socket.disconnect();
 	}
 	
 	/**
 	 * ws event receiver
 	 */
-	_socket.on('message', function(data) {
-		var remoteIP = _socket.request.connection.remoteAddress.replace('::ffff:', '');
+	socket.on('message', function(data) {
+		let remoteIP = socket.request.connection.remoteAddress.replace('::ffff:', '');
+		console.log(`===== Server get message from ${remoteIP} via ws =====`);
+		console.log(data);
 		data = JSON.parse(data);
 		switch(data.event) {
 			case 'newMessage': 
-				_handleNewMessage(data.data.msg, remoteIP);
+				socket.emit('message', JSON.stringify({
+					event: 'newMessage', 
+					data: {
+						msg: data.data.msg, 
+						ip: remoteIP
+					}
+				}));
 				break;
 		}
 	});
 
-	_socket.on('disconnect', function(){
+	socket.on('disconnect', function(){
 		console.log('user disconnected');
 	});
 });
-
-function _handleNewMessage(msg, ip) {
-	_socket.emit('message', JSON.stringify({
-		event: 'newMessage', 
-		data: {
-			msg, 
-			ip
-		}
-	}));
-}
 
 http.listen(CONFIG.webPort, function(){
 	console.log('listening on 127.0.0.1:' + CONFIG.webPort);

@@ -31,6 +31,8 @@ serverSocket.on('message', function (message, rinfo) {
 
 function _handleRegister(key, ip) {
 	member.addMember(ip);
+	console.log(`===== new member added: ${ip} =====`);
+	console.log(JSON.stringify(member.getMemberList()));
 	var msg = JSON.stringify({
 		event: 'register', 
 		data: {
