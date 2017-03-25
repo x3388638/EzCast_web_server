@@ -15,6 +15,7 @@ module.exports = {
 		if(_memberList[ip]) {
 			delete _memberList[ip];
 		}
+		return _memberList;
 	},
 	isExist: function(ip) {
 		return _memberList[ip] ? true : false;

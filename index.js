@@ -54,6 +54,14 @@ app.post('/message', cors(), function(req, res) {
 	});
 });
 
+app.post('/disconnect', cors(), function(req, res) {
+	let ip = req.headers['x-forwarded-for'] || req.connection.remoteAddress;
+	ip = ip.replace('::ffff:', '');
+	let memberList = member.deleteMember(ip);
+	console.log(`===== member deleted ${ip} =====`);
+	console.log(`member list: ${JSON.stringify(memberList)}`);
+});
+
 function _castMsg(msg, sender) {
 	console.log(`===== cast meg to members =====`);
 	let m = member.getMemberList();
