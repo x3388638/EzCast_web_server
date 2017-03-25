@@ -21,7 +21,14 @@ serverSocket.on('listening', function () {
  */
 serverSocket.on('message', function (message, rinfo) {
 	var remoteAddr = rinfo.address;
-	var msg = JSON.parse(message);
+	try {
+		var msg = JSON.parse(message);
+	} catch(err) {
+		console.log(err);
+	}
+	if(!msg) {
+		return;
+	}
 	switch(msg.event) {
 		case 'register':
 			_handleRegister(msg.data.key, remoteAddr);
