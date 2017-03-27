@@ -63,6 +63,17 @@ app.post('/disconnect', cors(), function(req, res) {
 	console.log(`member list: ${JSON.stringify(memberList)}`);
 });
 
+app.post('/user', cors(), function(req, res) {
+	let ip = req.headers['x-forwarded-for'] || req.connection.remoteAddress;
+	ip = ip.replace('::ffff:', '');
+	let name = req.body.name;
+	member.updateMember(ip, {name});
+	console.log(`===== member name updated ${ip} ${name} =====`);
+	res.json({
+		err: 0
+	});
+});
+
 function _castMsg(msg, sender, name) {
 	console.log(`===== cast meg to members =====`);
 	let m = member.getMemberList();

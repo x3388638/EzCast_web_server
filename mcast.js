@@ -49,7 +49,7 @@ serverSocket.on('message', function (message, rinfo) {
 	}
 	switch(msg.event) {
 		case 'register':
-			_handleRegister(msg.data.name, msg.data.key, remoteAddr);
+			_handleRegister(msg.data.name || remoteAddr, msg.data.key, remoteAddr);
 			break;
 	}
 });
@@ -62,7 +62,8 @@ function _handleRegister(name, key, ip) {
 		event: 'register', 
 		data: {
 			key, 
-			ip
+			ip, 
+			name
 		}
 	});
 	serverSocket.send(new Buffer(msg), DES_PORT, MULTICAST_ADDR, function() {

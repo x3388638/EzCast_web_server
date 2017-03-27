@@ -4,7 +4,7 @@ module.exports = {
 	addMember: function(name, ip) {
 		if(!_memberList[ip]) {
 			_memberList[ip] = {
-				name: name || ip, 
+				name, 
 				ip
 			}
 		}
@@ -15,6 +15,11 @@ module.exports = {
 	getMemberList: function() {
 		return _memberList;
 	}, 
+	updateMember: function(ip, obj) {
+		if(_memberList[ip]) {
+			_memberList[ip] = Object.assign({}, _memberList[ip], obj);
+		}
+	},
 	deleteMember: function(ip) {
 		if(_memberList[ip]) {
 			delete _memberList[ip];
