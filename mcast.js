@@ -21,7 +21,7 @@ for (var k in interfaces) {
     }
 }
 
-serverSocket.bind(SRC_PORT, MULTICAST_ADDR);
+serverSocket.bind(SRC_PORT);
 
 serverSocket.on('listening', function () {
 	console.log(`udp built on port ${SRC_PORT}`);
@@ -37,7 +37,7 @@ serverSocket.on('listening', function () {
  * ws event receiver
  */
 serverSocket.on('message', function (message, rinfo) {
-	console.log(message);
+	// console.log(message);
 	var remoteAddr = rinfo.address;
 	try {
 		var msg = JSON.parse(message);
