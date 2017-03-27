@@ -47,8 +47,9 @@ app.post('/message', cors(), function(req, res) {
 	var msg = req.body.msg;
 	console.log(`===== server get message from ${ip} =====`);
 	console.log(msg);
+	var name = member.getMember(ip).name;
 	// send message to all members
-	_castMsg(msg, ip);
+	_castMsg(msg, ip, name);
 	res.json({
 		err: 0
 	});
@@ -62,7 +63,7 @@ app.post('/disconnect', cors(), function(req, res) {
 	console.log(`member list: ${JSON.stringify(memberList)}`);
 });
 
-function _castMsg(msg, sender) {
+function _castMsg(msg, sender, name) {
 	console.log(`===== cast meg to members =====`);
 	let m = member.getMemberList();
 	for(let receiver in m) {
@@ -71,6 +72,7 @@ function _castMsg(msg, sender) {
 			url: `http://${receiver}:${+CONFIG.webPort-1}/message`, 
 			body: {
 				msg, 
+				name, 
 				ip: sender
 			}, 
 			json: true

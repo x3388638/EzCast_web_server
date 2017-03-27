@@ -1,12 +1,16 @@
 let _memberList = {};
 
 module.exports = {
-	addMember: function(ip) {
+	addMember: function(name, ip) {
 		if(!_memberList[ip]) {
 			_memberList[ip] = {
+				name: name || ip, 
 				ip
 			}
 		}
+	}, 
+	getMember: function(ip) {
+		return _memberList[ip];
 	}, 
 	getMemberList: function() {
 		return _memberList;

@@ -34,7 +34,7 @@ serverSocket.on('listening', function () {
 });
 
 /**
- * ws event receiver
+ * multicast event receiver
  */
 serverSocket.on('message', function (message, rinfo) {
 	// console.log(message);
@@ -49,13 +49,13 @@ serverSocket.on('message', function (message, rinfo) {
 	}
 	switch(msg.event) {
 		case 'register':
-			_handleRegister(msg.data.key, remoteAddr);
+			_handleRegister(msg.data.name, msg.data.key, remoteAddr);
 			break;
 	}
 });
 
-function _handleRegister(key, ip) {
-	member.addMember(ip);
+function _handleRegister(name, key, ip) {
+	member.addMember(name, ip);
 	console.log(`===== new member added: ${ip} =====`);
 	console.log(JSON.stringify(member.getMemberList()));
 	var msg = JSON.stringify({
