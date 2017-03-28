@@ -9,6 +9,8 @@ var io = require('socket.io')(http);
 var path = require('path');
 var request = require('request');
 var cors = require('cors');
+var Entities = require('html-entities').AllHtmlEntities;
+var htmlEntity = new Entities();
 
 // parse application/x-www-form-urlencoded
 app.use(bodyParser.urlencoded({ extended: false }));
@@ -44,7 +46,7 @@ app.post('/message', cors(), function(req, res) {
 		res.send('access denied');
 		return;
 	}
-	var msg = req.body.msg;
+	var msg = htmlEntity.encode(req.body.msg);
 	console.log(`===== server get message from ${ip} =====`);
 	console.log(msg);
 	var name = member.getMember(ip).name;
