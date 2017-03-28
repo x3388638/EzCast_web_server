@@ -11,6 +11,7 @@ var request = require('request');
 var cors = require('cors');
 var Entities = require('html-entities').AllHtmlEntities;
 var htmlEntity = new Entities();
+var moment = require('moment');
 
 let _msgStorage = [];
 let _msgLimit = 50;
@@ -53,9 +54,10 @@ app.post('/message', cors(), function(req, res) {
 	console.log(`===== server get message from ${ip} =====`);
 	console.log(msg);
 	var name = member.getMember(ip).name;
+	var time = moment().format('HH:mm');
 	// send message to all members
-	_storeMsg(msg, ip, name);
-	_castMsg(msg, ip, name);
+	_storeMsg(msg, ip, name, time);
+	_castMsg(msg, ip, name, time);
 	res.json({
 		err: 0
 	});
@@ -94,7 +96,7 @@ app.post('/user', cors(), function(req, res) {
 	});
 });
 
-function _castMsg(msg, sender, name) {
+function _castMsg(msg, sender, name, time) {
 	console.log(`===== cast meg to members =====`);
 	let m = member.getMemberList();
 	for(let receiver in m) {
@@ -104,6 +106,7 @@ function _castMsg(msg, sender, name) {
 			body: {
 				msg, 
 				name, 
+				time, 
 				ip: sender
 			}, 
 			json: true
@@ -112,11 +115,12 @@ function _castMsg(msg, sender, name) {
 	}
 }
 
-function _storeMsg(msg, ip, name) {
+function _storeMsg(msg, ip, name, time) {
 	_msgStorage = [..._msgStorage, {
 		msg, 
 		ip, 
-		name
+		name, 
+		time
 	}];
 	if(_msgStorage.length > _msgLimit) {
 		_msgStorage = _msgStorage.slice(1);
