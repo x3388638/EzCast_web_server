@@ -12,6 +12,9 @@ var cors = require('cors');
 var Entities = require('html-entities').AllHtmlEntities;
 var htmlEntity = new Entities();
 
+let _msgStorage = [];
+let _msgLimit = 50;
+
 // parse application/x-www-form-urlencoded
 app.use(bodyParser.urlencoded({ extended: false }));
 // parse application/json
@@ -51,9 +54,24 @@ app.post('/message', cors(), function(req, res) {
 	console.log(msg);
 	var name = member.getMember(ip).name;
 	// send message to all members
+	_storeMsg(msg, ip, name);
 	_castMsg(msg, ip, name);
 	res.json({
 		err: 0
+	});
+});
+
+app.get('/message', cors(), function(req, res) {
+	let ip = req.headers['x-forwarded-for'] || req.connection.remoteAddress;
+	ip = ip.replace('::ffff:', '');
+	if(!member.isExist(ip) && ip != '127.0.0.1') {
+		console.log(`===== receive msg from who is not member ${ip} =====`);
+		res.send('access denied');
+		return;
+	}
+	res.json({
+		err: 0, 
+		list: _msgStorage
 	});
 });
 
@@ -91,6 +109,17 @@ function _castMsg(msg, sender, name) {
 			json: true
 		}, function(err, res, body) {
 		});
+	}
+}
+
+function _storeMsg(msg, ip, name) {
+	_msgStorage = [..._msgStorage, {
+		msg, 
+		ip, 
+		name
+	}];
+	if(_msgStorage.length > _msgLimit) {
+		_msgStorage = _msgStorage.slice(1);
 	}
 }
 
