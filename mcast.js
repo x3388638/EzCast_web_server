@@ -3,6 +3,7 @@ const member = require('./member.js');
 var os = require('os');
 var dgram = require('dgram');
 var serverSocket = dgram.createSocket("udp4");
+var request = require('request');
 var SRC_PORT = CONFIG.udpPort;
 var DES_PORT = +SRC_PORT-1;
 var MULTICAST_ADDR = CONFIG.multicastAddr;
@@ -66,8 +67,19 @@ function _handleRegister(name, key, ip) {
 			name
 		}
 	});
-	serverSocket.send(new Buffer(msg), DES_PORT, MULTICAST_ADDR, function() {
-		console.log(`Send multicast to port ${DES_PORT} ::: ${msg}`);
+
+	// send register msg to client via http request
+	console.log(`POST HTTP request to ${ip}:${CONFIG.webPort - 1}`);
+	request.post({
+		url: `http://${ip}:${CONFIG.webPort - 1}/register`, 
+		body: {
+			key, 
+			ip, 
+			name
+		}, 
+		json: true
+	}, function(err, response, body) {
+		console.log(body);
 	});
 }
 
