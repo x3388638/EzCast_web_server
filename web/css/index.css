@@ -1,0 +1,64 @@
+body {
+	background: #f3f3f3;
+}
+
+#commentContainer {
+	margin-top: 50px;
+	border-radius: 5px 5px 0 0;
+	border: 1px solid #888;
+	font-family: "ubuntu mono", "Monaco", "monospace", "Courier New"; 
+	box-shadow: 0px 0px 10px 0px;
+	background: #fff;
+}
+
+#commentContainer #title {
+	text-align: center;
+	border-radius: 5px 5px 0 0;
+	padding: 10px 0;
+}
+
+#commentContainer #body {
+	height: calc(100vh - 150px);
+	min-height: 400px;
+	overflow: auto;
+}
+
+#commentContainer #body .msgRow {
+	margin-bottom: 10px;
+	border-left: 5px solid #f3f3f3;
+	padding-left: 15px;
+}
+
+#commentContainer #body .msgRow .title {
+	overflow: hidden;
+	height: 45px;
+}
+
+#commentContainer #body .msgRow .title .time{
+	position: relative;
+	top: -8px;
+	margin-right: 10px;
+	opacity: 0.2;
+	transition: all .2s;
+}
+
+#commentContainer #body .msgRow:hover .title .time{
+	opacity: 1;
+}
+
+#commentContainer #body .msgRow .title .name {
+	font-size: 20px;
+	font-weight: bold;
+}
+
+#commentContainer #body .msgRow .title .ip {
+	font-size: 10px;
+	top: -8px;
+	position: relative;
+}
+
+#commentContainer #body .msgRow .content {
+	word-break: break-all;
+	line-height: 16px;
+	padding-left: 20px;
+}
