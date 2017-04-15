@@ -51,6 +51,7 @@ app.post('/message', cors(), function(req, res) {
 		return;
 	}
 	var msg = htmlEntity.encode(req.body.msg);
+	msg = _urlify(msg);
 	console.log(`===== server get message from ${ip} =====`);
 	console.log(msg);
 	var name = member.getMember(ip).name;
@@ -125,6 +126,13 @@ function _storeMsg(msg, ip, name, time) {
 	if(_msgStorage.length > _msgLimit) {
 		_msgStorage = _msgStorage.slice(1);
 	}
+}
+
+function _urlify(text) {
+	var urlRegex = /(https?:\/\/[^\s]+)/g;
+	return text.replace(urlRegex, function(url) {
+	    return `<a href="${url}" target="_blank">${url}</a>`;
+	});
 }
 
 http.listen(CONFIG.webPort, function(){
