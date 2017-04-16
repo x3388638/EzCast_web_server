@@ -62,3 +62,11 @@ body {
 	line-height: 16px;
 	padding-left: 20px;
 }
+
+#toolContainer {
+	margin-top: 50px;
+}
+
+#toolContainer #broadcastContainer {
+	margin-bottom: 20px;
+}
