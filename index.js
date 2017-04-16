@@ -22,19 +22,29 @@ app.use(bodyParser.urlencoded({ extended: false }));
 app.use(bodyParser.json());
 app.use(express.static('web'));
 
-io.on('connection', function(socket){
+io.on('connection', function (socket) {
 	let connectedIP = socket.request.connection.remoteAddress.replace('::ffff:', '');
 	console.log(`===== A ws client connected, IP: ${connectedIP} =====`);
-	if(!member.isExist(connectedIP) && connectedIP != '127.0.0.1') {
+	// TODO: check all interface
+	if(connectedIP != '127.0.0.1') {
 		console.log(`Reject ws from ${connectedIP}.`);
 		socket.disconnect();
 	}
-	
+
 	/**
 	 * ws event receiver
 	 */
-	
-	socket.on('disconnect', function(){
+	socket.on('broadcast', function (msg) {
+		console.log(`===== broadcast received ${msg} =====`);
+		var msg = htmlEntity.encode(msg);
+		msg = _urlify(msg);
+		var name = 'Admin';
+		var time = moment().format('HH:mm');
+		// send message to all members
+		_storeMsg(msg, '224.0.0.1', name, time, true);
+		_castMsg(msg, '224.0.0.1', name, time, true);
+	});
+	socket.on('disconnect', function () {
 		console.log('user disconnected');
 	});
 });
@@ -97,7 +107,7 @@ app.post('/user', cors(), function(req, res) {
 	});
 });
 
-function _castMsg(msg, sender, name, time) {
+function _castMsg(msg, sender, name, time, admin = false) {
 	console.log(`===== cast meg to members =====`);
 	let m = member.getMemberList();
 	for(let receiver in m) {
@@ -108,6 +118,7 @@ function _castMsg(msg, sender, name, time) {
 				msg, 
 				name, 
 				time, 
+				admin, 
 				ip: sender
 			}, 
 			json: true
@@ -116,12 +127,13 @@ function _castMsg(msg, sender, name, time) {
 	}
 }
 
-function _storeMsg(msg, ip, name, time) {
+function _storeMsg(msg, ip, name, time, admin = false) {
 	_msgStorage = [..._msgStorage, {
 		msg, 
 		ip, 
 		name, 
-		time
+		time, 
+		admin
 	}];
 	if(_msgStorage.length > _msgLimit) {
 		_msgStorage = _msgStorage.slice(1);
